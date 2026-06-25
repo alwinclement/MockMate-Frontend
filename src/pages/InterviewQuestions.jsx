@@ -82,7 +82,7 @@ function InterviewQuestions() {
     return (
       <div style={{ maxWidth: 600, margin: '80px auto', textAlign: 'center' }}>
         <p>No active session. Start a new interview first.</p>
-        <button onClick={() => navigate(`/interview/live/${currentSession.id}`)}
+        <button onClick={() => navigate(`/interview/live/${currentSession.id}`, { replace: true })}
           style={{
             width: '100%', padding: '14px 0',
             background: '#4f46e5', color: '#fff',
@@ -147,7 +147,7 @@ function InterviewQuestions() {
       {/* Secondary actions */}
       <div style={{ display: 'flex', gap: 12 }}>
           <button
-              onClick={() => navigate('/interview/setup')}
+              onClick={() => navigate('/interview/setup', { replace: true })}
               style={{
                   flex: 1, padding: '12px 0',
                   background: '#fff', border: '1px solid #e5e7eb',

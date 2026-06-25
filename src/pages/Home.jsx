@@ -2,6 +2,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../store/authSlice';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { fetchMyResumes } from '../store/resumeSlice';
 
 function Home() {
   const dispatch = useDispatch();
@@ -9,9 +11,22 @@ function Home() {
   const user = useSelector((state) => state.auth.user);
   const role = useSelector((state) => state.auth.user?.role);
 
+  useEffect(() => {
+    dispatch(fetchMyResumes());
+  }, [dispatch]);
+
+  const { resumes, loading: resumesLoading } = useSelector((s) => s.resume);
+
+  // If resumes have finished loading and there are none, this user has no resume yet
+  const noResumeYet =
+  !resumesLoading &&
+  (!resumes || resumes.length === 0);
+
+  const hasResume = resumes && resumes.length > 0;
+
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    navigate('/login', { replace: true });
   };
   const cards = [
     {
@@ -22,14 +37,14 @@ function Home() {
       color: '#4f46e5',
       bg: '#eef2ff',
     },
-    {
-      title: 'Start Mock Interview',
-      description: 'Generate personalised questions and practice with a live session',
-      icon: '🎤',
-      path: '/interview/setup',
-      color: '#7c3aed',
-      bg: '#f5f3ff',
-    },
+    ...(hasResume ? [{
+        title: 'Start Mock Interview',
+        description: 'Generate personalised questions and practice with a live session',
+        icon: '🎤',
+        path: '/interview/setup',
+        color: '#7c3aed',
+        bg: '#f5f3ff',
+    }] : []),
     {
       title: 'Progress Dashboard',
       description: 'Track your score trends and identify weak areas over time',
@@ -49,6 +64,27 @@ function Home() {
         bg: '#fef2f2',
     });
   }
+  if (noResumeYet) {
+    return (
+        <div style={{ maxWidth: 480, margin: '100px auto', padding: 24, textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>📄</div>
+            <h3 style={{ marginBottom: 8 }}>Upload your resume first</h3>
+            <p style={{ color: '#6b7280', marginBottom: 24 }}>
+                We need your resume to generate personalised interview questions.
+            </p>
+            <button
+                onClick={() => navigate('/resume')}
+                style={{
+                    padding: '12px 28px', background: '#4f46e5', color: '#fff',
+                    border: 'none', borderRadius: 8, fontSize: 15,
+                    fontWeight: 600, cursor: 'pointer',
+                }}
+            >
+                Upload resume & start mock interview
+            </button>
+        </div>
+    );
+}
 
   return (
     <div style={{

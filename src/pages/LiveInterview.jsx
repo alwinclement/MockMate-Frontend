@@ -46,12 +46,19 @@ function LiveInterview() {
     dispatch(setSessionId(Number(sessionId)));
 
     axiosInstance.post(`/api/interview/live/start/${sessionId}`)
-      .catch(err => console.error('Failed to start live session:', err));
+        .catch(err => {
+            console.error('Failed to start live session:', err);
+            // If it's already completed, redirect straight to results instead of
+            // showing a broken/restarted interview screen
+            if (err.response?.data?.message?.includes('already been completed')) {
+                navigate(`/interview/results/report/${sessionId}`, { replace: true });
+            }
+        });
 
     return () => {
-      dispatch(resetLiveSession());
+        dispatch(resetLiveSession());
     };
-  }, [sessionId, dispatch]);
+  }, [sessionId, dispatch, navigate]);
 
   // Track when current question arrived so we know how long they took
   useEffect(() => {
@@ -140,7 +147,7 @@ function LiveInterview() {
 
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center' }}>
           <button
-            onClick={() => navigate(`/interview/results/report/${sessionId}`)}
+            onClick={() => navigate(`/interview/results/report/${sessionId}`, { replace: true })}
             style={{
                 padding: '12px 28px', background: '#4f46e5', color: '#fff',
                 border: 'none', borderRadius: 8, fontSize: 15, cursor: 'pointer',

@@ -8,6 +8,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false); 
   const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = async (e) => {
@@ -99,6 +100,7 @@ function Login() {
             />
           </div>
 
+          {/* Password field with show/hide toggle */}
           <div style={{ marginBottom: 24 }}>
             <label style={{
               display: 'block', fontSize: 13, fontWeight: 500,
@@ -106,21 +108,45 @@ function Login() {
             }}>
               Password
             </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                width: '100%', padding: '11px 14px',
-                border: '1px solid #e5e7eb', borderRadius: 10,
-                fontSize: 14, boxSizing: 'border-box',
-                outline: 'none', transition: 'border-color 0.2s',
-              }}
-              onFocus={(e) => e.target.style.borderColor = '#4f46e5'}
-              onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
-            />
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                style={{
+                  width: '100%', padding: '11px 44px 11px 14px',
+                  border: '1px solid #e5e7eb', borderRadius: 10,
+                  fontSize: 14, boxSizing: 'border-box',
+                  outline: 'none', transition: 'border-color 0.2s',
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#4f46e5'}
+                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: 'absolute',
+                  right: 12,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 4,
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: '#6b7280',
+                  fontSize: 18,
+                }}
+                tabIndex={-1}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
           </div>
 
           <button

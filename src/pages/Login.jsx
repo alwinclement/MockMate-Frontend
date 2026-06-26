@@ -144,7 +144,7 @@ function Login() {
                 tabIndex={-1}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-                {showPassword ? '🔒' : '🔓'}
+                {showPassword ? '🔓' : '🔒'}
               </button>
             </div>
           </div>

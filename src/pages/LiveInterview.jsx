@@ -38,8 +38,7 @@ function LiveInterview() {
   const [startTime, setStartTime] = useState(null);
   const [timerExpired, setTimerExpired] = useState(false);
   const answerTextRef = useRef('');
-
-  const { sendAnswer } = useInterviewSocket(Number(sessionId));
+  const { sendAnswer, isConnected } = useInterviewSocket(Number(sessionId));
 
   // Start the live session via HTTP
   useEffect(() => {
@@ -72,6 +71,29 @@ function LiveInterview() {
   useEffect(() => {
     answerTextRef.current = answerText;
   }, [answerText]);
+
+  useEffect(() => {
+    dispatch(setSessionId(Number(sessionId)));
+  }, [sessionId, dispatch]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+
+    axiosInstance.post(`/api/interview/live/start/${sessionId}`)
+        .catch(err => {
+            console.error('Failed to start live session:', err);
+            if (err.response?.data?.message?.includes('already been completed')) {
+                navigate(`/interview/results/report/${sessionId}`, { replace: true });
+            }
+        });
+  }, [isConnected, sessionId, navigate]);
+
+  useEffect(() => {
+      return () => {
+          dispatch(resetLiveSession());
+      };
+  }, [dispatch]);
+
 
   const handleVoiceTranscript = useCallback((transcript) => {
     setAnswerText(transcript);
